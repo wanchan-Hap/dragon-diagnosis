@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>守護ドラゴン診断</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: linear-gradient(180deg, #f7f5f2, #ffffff);
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 520px;
+      margin: auto;
+      background: #fff;
+      padding: 22px;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 13px;
+      color: #777;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: #ece7e2;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #ddd6cf;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #result {
+      text-align: center;
+    }
+
+    .result-title {
+      font-size: 24px;
+      margin: 10px 0;
+    }
+
+    .dragon-box {
+      margin: 15px 0;
+      padding: 15px;
+      border-radius: 12px;
+      background: #fafafa;
+    }
+
+    .cta {
+      margin-top: 18px;
+      padding: 14px;
+      background: #b89b6f;
+      color: white;
+      border-radius: 10px;
+      display: inline-block;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .restart {
+      margin-top: 10px;
+      background: #b5c9a9;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>🐉 守護ドラゴン診断</h1>
+    <div class="subtitle">あなたの内側に眠る“守護の存在”を見つけます</div>
+
+    <div id="quiz"></div>
+
+    <div id="result" class="hidden">
+      <div class="result-title" id="resultTitle"></div>
+
+      <div class="dragon-box">
+        <p id="resultText"></p>
+      </div>
+
+      <p style="font-size:13px; color:#666;">
+        このドラゴンは、あなたの内側から生まれた守護の存在です。<br>
+        今、その姿として現実世界に降りてきています。
+      </p>
+
+      <!-- 販売導線 -->
+      <a class="cta" href="https://your-shop-link.com" target="_blank">
+        🐉 このドラゴンをお迎えする
+      </a>
+
+      <button class="restart" onclick="restart()">もう一度診断する</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        q: "休日の過ごし方は？",
+        choices: [
+          { text: "家で整える", type: "earth" },
+          { text: "癒しの時間", type: "water" },
+          { text: "外で行動する", type: "fire" },
+          { text: "気分で動く", type: "air" }
+        ]
+      },
+      {
+        q: "大切にしているのは？",
+        choices: [
+          { text: "安定", type: "earth" },
+          { text: "共感", type: "water" },
+          { text: "情熱", type: "fire" },
+          { text: "自由", type: "air" }
+        ]
+      },
+      {
+        q: "人からよく言われるのは？",
+        choices: [
+          { text: "落ち着いてる", type: "earth" },
+          { text: "優しい", type: "water" },
+          { text: "パワフル", type: "fire" },
+          { text: "マイペース", type: "air" }
+        ]
+      },
+      {
+        q: "困ったときは？",
+        choices: [
+          { text: "整理して考える", type: "earth" },
+          { text: "誰かに相談", type: "water" },
+          { text: "すぐ動く", type: "fire" },
+          { text: "流れに任せる", type: "air" }
+        ]
+      },
+      {
+        q: "理想の世界は？",
+        choices: [
+          { text: "安心できる場所", type: "earth" },
+          { text: "癒される関係", type: "water" },
+          { text: "刺激的な世界", type: "fire" },
+          { text: "自由な世界", type: "air" }
+        ]
+      }
+    ];
+
+    let current = 0;
+    let scores = { earth: 0, water: 0, fire: 0, air: 0 };
+
+    function showQuestion() {
+      const quiz = document.getElementById("quiz");
+      quiz.innerHTML = "";
+
+      if (current >= questions.length) {
+        showResult();
+        return;
+      }
+
+      const q = questions[current];
+
+      const title = document.createElement("h2");
+      title.textContent = q.q;
+      quiz.appendChild(title);
+
+      q.choices.forEach(choice => {
+        const btn = document.createElement("button");
+        btn.textContent = choice.text;
+        btn.onclick = () => {
+          scores[choice.type]++;
+          current++;
+          showQuestion();
+        };
+        quiz.appendChild(btn);
+      });
+    }
+
+    function showResult() {
+      document.getElementById("quiz").classList.add("hidden");
+      document.getElementById("result").classList.remove("hidden");
+
+      let type = Object.keys(scores).reduce((a, b) =>
+        scores[a] > scores[b] ? a : b
+      );
+
+      const dragons = {
+        earth: {
+          title: "🌱 地の守護ドラゴン",
+          text: "大地のようにあなたを支える存在。現実を整え、安心と安定をもたらします。パステルベージュの優しい守護者。"
+        },
+        water: {
+          title: "💧 水の守護ドラゴン",
+          text: "心を癒し、感情を流してくれる存在。優しさと共感であなたを包み込むパステルブルーのドラゴン。"
+        },
+        fire: {
+          title: "🔥 火の守護ドラゴン",
+          text: "情熱と行動力を引き出す存在。あなたの願いを現実へと動かすコーラルカラーの守護者。"
+        },
+        air: {
+          title: "🌿 風の守護ドラゴン",
+          text: "自由と変化を運ぶ存在。軽やかに未来へ導くラベンダーカラーのドラゴンです。"
+        }
+      };
+
+      document.getElementById("resultTitle").textContent = dragons[type].title;
+      document.getElementById("resultText").textContent = dragons[type].text;
+    }
+
+    function restart() {
+      current = 0;
+      scores = { earth: 0, water: 0, fire: 0, air: 0 };
+      document.getElementById("quiz").classList.remove("hidden");
+      document.getElementById("result").classList.add("hidden");
+      showQuestion();
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
